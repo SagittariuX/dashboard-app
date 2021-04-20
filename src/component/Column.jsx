@@ -45,4 +45,4 @@ const Column = ({ column, tasks }) => {
   );
 };
 
-export default Column;
+export default React.memo(Column);
