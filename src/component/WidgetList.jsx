@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import { Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import Widget from "./Widget";
@@ -23,8 +23,11 @@ const ListWidgets = styled.div`
 
 const WidgetList = React.memo(
   ({ list, widgets }) => {
+
+    const count = useRef(0);
     return (
       <ListContainer>
+        <div>{count.current += 1}</div>
         <Droppable droppableId={list.id}>
           {(provided, snapshot) => (
             <ListWidgets
@@ -44,9 +47,9 @@ const WidgetList = React.memo(
     );
   },
   (prevProps, nextProps) => {
-    console.log('prop check')
+    console.log(prevProps);
+    console.log(nextProps)
     if (JSON.stringify(prevProps.list) !== JSON.stringify(nextProps.list)) {
-        
       return false;
     }
 

@@ -8,11 +8,11 @@ const widgetsData = {
   lists: {
     "list-1": {
       id: "list-1",
-      widgetIds: ["default-1", "default-2", "default-3"],
+      widgetIds: ["default-1", "default-2"],
     },
     "list-2": {
       id: "list-2",
-      widgetIds: ["default-4"],
+      widgetIds: ["default-3", "default-4"],
     },
   },
   // Facilitate reordering of the lists
