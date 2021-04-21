@@ -1,10 +1,10 @@
 import "./App.css";
-import ListTest from "./component/ListTest";
+import Main from "./component/Main";
 
 function App() {
   return (
     <div className="App">
-      <ListTest />
+      <Main />
     </div>
   );
 }
