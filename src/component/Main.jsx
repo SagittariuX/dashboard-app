@@ -4,34 +4,64 @@ import Cookies from "universal-cookie";
 
 import { DragDropContext } from "react-beautiful-dnd";
 import DefaultData from "./DefaultRowData";
+import Viewport from './Viewports';
 
 import WidgetList from "./WidgetList";
 
+import {StylesProvider} from '@material-ui/core/styles'
+import {Container} from '@material-ui/core';
+
+const BackgroundWrapper = styled(Container)`
+  background-color: grey;
+`;
+
+const AppWrapper = styled(Container)`
+  display: flex;
+  min-height: 100vh;
+  padding-left: 0px;
+  padding-right: 0px;
+  
+  background-color: blue;
+
+
+  @media ${Viewport.tablet}{
+    display:block;
+  }
+`;
+
 const MainWidgetsContainer = styled.div`
   display: flex;
+  flex: 3;
   flex-direction: column;
-  border: solid 3px;
 `;
+
+const SideBar = styled.div`
+  display: flex;
+  flex: 1;
+  background-color: green;
+`;
+
 
 const Main = () => {
   const [data, setData] = useState(DefaultData);
 
-  //First time setup for new users
-  // useEffect(() => {
-  //   const cookies = new Cookies();
+  // First time setup for new users
+  useEffect(() => {
+    const cookies = new Cookies();
 
-  //   const existingData = cookies.get('widgetsData')
-  //   console.log(existingData)
-  //   if(existingData) {
-  //     setData(existingData); //Use cookie data
-  //   }else{
-  //     cookies.set('widgetsData' , DefaultData, {path: '/'})
-  //   }
-  // }, [])
+    const existingData = cookies.get('widgetsData')
+    console.log(existingData)
+    if(existingData) {
+      setData(existingData); //Use cookie data
+    }else{
+      cookies.set('widgetsData' , DefaultData, {path: '/'})
+    }
+  }, [])
 
   const handleDragEnd = (result) => {
     const { destination, source, draggableId } = result;
 
+    const cookies = new Cookies();
     if (!destination) return;
 
     if (
@@ -59,22 +89,61 @@ const Main = () => {
           [newList.id]: newList,
         },
       };
-
+      
+      cookies.set('widgetsData' , newState, {path: '/'})
       setData(newState);
       return;
     }
+
+    const startWidgetIds = Array.from(start.widgetIds);
+    startWidgetIds.splice(source.index, 1);
+    const newStart = {
+      ...start,
+      widgetIds : startWidgetIds,
+    }
+
+    const endWidgetIds = Array.from(end.widgetIds);
+    endWidgetIds.splice(destination.index, 0 , draggableId);
+    const newEnd = {
+      ...end,
+      widgetIds : endWidgetIds,
+    }
+
+    const newState={
+      ...data,
+      lists:{
+        ...data.lists,
+        [newStart.id] : newStart,
+        [newEnd.id] : newEnd,
+      }
+    }
+
+    cookies.set('widgetsData' , newState, {path: '/'})
+    setData(newState);
+    return;
+
   };
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <MainWidgetsContainer>
-        {data.listOrder.map((listId) => {
-          const list = data.lists[listId];
-          const widgets = list.widgetIds.map((id) => data.widgets[id]);
-          return <WidgetList key={list.id} list={list} widgets={widgets} />;
-        })}
-      </MainWidgetsContainer>
-    </DragDropContext>
+    
+    <StylesProvider injectFirst>
+      <BackgroundWrapper maxWidth='false'>
+        <AppWrapper maxWidth='xl'>
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <MainWidgetsContainer>
+              {data.listOrder.map((listId) => {
+                const list = data.lists[listId];
+                const widgets = list.widgetIds.map((id) => data.widgets[id]);
+                return <WidgetList key={list.id} list={list} widgets={widgets} />;
+              })}
+            </MainWidgetsContainer>
+          </DragDropContext>
+          <SideBar>
+            HI
+          </SideBar>
+        </AppWrapper>
+      </BackgroundWrapper>
+    </StylesProvider>
   );
 };
 
