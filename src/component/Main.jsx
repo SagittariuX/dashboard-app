@@ -12,7 +12,8 @@ import {StylesProvider} from '@material-ui/core/styles'
 import {Container} from '@material-ui/core';
 
 const BackgroundWrapper = styled(Container)`
-  background-color: grey;
+  background-color: #3d434b;
+  padding: 8px;
 `;
 
 const AppWrapper = styled(Container)`
@@ -21,9 +22,10 @@ const AppWrapper = styled(Container)`
   padding-left: 0px;
   padding-right: 0px;
   
-  background-color: blue;
+  background-color: transparent;
+  border-radius: 10px;
 
-
+  overflow: hidden;
   @media ${Viewport.tablet}{
     display:block;
   }
@@ -38,7 +40,7 @@ const MainWidgetsContainer = styled.div`
 const SideBar = styled.div`
   display: flex;
   flex: 1;
-  background-color: green;
+  background-color: #383c40;
 `;
 
 
@@ -62,14 +64,15 @@ const Main = () => {
     const { destination, source, draggableId } = result;
 
     const cookies = new Cookies();
-    if (!destination) return;
-
+    if (!destination){
+      return;
+    }
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
-    )
+    ){
       return;
-
+    }
     const start = data.lists[source.droppableId];
     const end = data.lists[destination.droppableId];
 
@@ -127,14 +130,14 @@ const Main = () => {
   return (
     
     <StylesProvider injectFirst>
-      <BackgroundWrapper maxWidth='false'>
+      <BackgroundWrapper maxWidth={false}>
         <AppWrapper maxWidth='xl'>
           <DragDropContext onDragEnd={handleDragEnd}>
             <MainWidgetsContainer>
               {data.listOrder.map((listId) => {
                 const list = data.lists[listId];
                 const widgets = list.widgetIds.map((id) => data.widgets[id]);
-                return <WidgetList key={list.id} list={list} widgets={widgets} />;
+                return <WidgetList key={list.id} list={list} widgets={widgets}/>;
               })}
             </MainWidgetsContainer>
           </DragDropContext>
